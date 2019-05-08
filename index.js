@@ -1,8 +1,10 @@
 // implement your API here
 const express = require('express');
+const cors = require('cors');
 
 const server = express();
 server.use(express.json());
+server.use(cors())
 const db = require('./data/db');
 
 server.get('/api/users', (req, res) => {
@@ -70,10 +72,20 @@ server.delete('/api/users/:id', (req, res) => {
 });
 
 server.put('/api/users/:id', (req, res) => {
+  if (!req.body.name || !req.body.bio) {
+    return res
+      .status(400)
+      .json({ errorMessage: 'Please provide name and bio for the user.' });
+  }
   const { id } = req.params;
   const user = req.body;
   db.update(id, user)
     .then(updatedUser => {
+      if (!updatedUser) {
+        return res
+          .status(404)
+          .json({ message: 'The user with the specified ID does not exist.' });
+      }
       res.json(updatedUser);
     })
     .catch(({ code, message }) => {
