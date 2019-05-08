@@ -48,6 +48,17 @@ server.delete('/api/users/:id', (req, res) => {
     });
 });
 
+server.put('/api/users/:id', (req, res) => {
+  const { id } = req.params;
+  const user = req.body;
+  db.update(id, user)
+    .then(updatedUser => {
+      res.json(updatedUser);
+    })
+    .catch(({ code, message }) => {
+      res.status(code).json({ err: message });
+    });
+});
 
 server.listen(9090, () => {
   console.log('server running on port 9090');
