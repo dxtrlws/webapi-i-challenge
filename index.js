@@ -10,8 +10,10 @@ server.get('/api/users', (req, res) => {
     .then(users => {
       res.json(users);
     })
-    .catch(({ code, message }) => {
-      res.status(code).json({ err: message });
+    .catch(({ code }) => {
+      res
+        .status(code)
+        .json({ error: 'The users information could not be retrieved.' });
     });
 });
 
@@ -19,6 +21,11 @@ server.get('/api/users/:id', (req, res) => {
   const { id } = req.params;
   db.findById(id)
     .then(user => {
+      if (!user) {
+        return res
+          .status(400)
+          .json({ message: 'The user with the specified ID does not exist.' });
+      }
       res.status(201).json(user);
     })
     .catch(({ code }) => {
@@ -33,28 +40,32 @@ server.post('/api/users', (req, res) => {
     return res
       .status(400)
       .json({ errorMessage: 'Please provide a name and bio for the user' });
-  } else {
-    const newUser = req.body;
-    db.insert(newUser)
-      .then(addUser => {
-        res.status(201).send(addUser);
-      })
-      .catch(({ code }) => {
-        res.status(code).json({
-          error: 'There was an error while saving the user to the database'
-        });
-      });
   }
+  const newUser = req.body;
+  db.insert(newUser)
+    .then(addUser => {
+      res.status(201).send(addUser);
+    })
+    .catch(({ code }) => {
+      res.status(code).json({
+        error: 'There was an error while saving the user to the database'
+      });
+    });
 });
 
 server.delete('/api/users/:id', (req, res) => {
   const { id } = req.params;
   db.remove(id)
     .then(user => {
+      if (!user) {
+        return res
+          .status(400)
+          .json({ message: 'The user with the specified ID does not exist.' });
+      }
       res.status(201).json(user);
     })
-    .catch(({ code, message }) => {
-      res.status(code).json({ err: message });
+    .catch(({ code }) => {
+      res.status(code).json({ error: 'The user could not be removed' });
     });
 });
 
