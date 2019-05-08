@@ -27,14 +27,24 @@ server.get('/api/users/:id', (req, res) => {
 });
 
 server.post('/api/users', (req, res) => {
-  const newUser = req.body;
-  db.insert(newUser)
-    .then(addUser => {
-      res.status(201).send(addUser);
-    })
-    .catch(({ code, message }) => {
-      res.status(code).json({ err: message });
-    });
+  if (!req.body.name || !req.body.bio) {
+    return res
+      .status(400)
+      .json({ errorMessage: 'Please provide a name and bio for the user' });
+  } else {
+    const newUser = req.body;
+    db.insert(newUser)
+      .then(addUser => {
+        res.status(201).send(addUser);
+      })
+      .catch(({ code }) => {
+        res
+          .status(code)
+          .json({
+            error: 'There was an error while saving the user to the database'
+          });
+      });
+  }
 });
 
 server.delete('/api/users/:id', (req, res) => {
