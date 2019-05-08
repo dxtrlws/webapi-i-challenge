@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import axios from 'axios';
- import Users from './Components/Users';
-
+import Users from './Components/Users';
+import { Route, Link } from 'react-router-dom';
+import UserForm from './Components/UserForm';
 class App extends Component {
   constructor(props) {
     super(props);
@@ -24,12 +25,30 @@ class App extends Component {
       });
   }
 
+  addUser = user => {
+    const { users } = this.state;
+    this.setState({
+      users: [...users, user]
+    });
+  };
+
   render() {
     const { users } = this.state;
     return (
-      <div className="App">
-        <h1>hello</h1>
-        <Users users={users} />
+      <div className='App'>
+        <h1>Users</h1>
+        <Link to='/userform'>Add User</Link>
+        {/* <Users users={users} /> */}
+        <Route
+          exact
+          path='/'
+          render={props => <Users {...props} users={users} />}
+        />
+        <Route
+          exact
+          path='/userform'
+          render={props => <UserForm {...props} addUser={this.addUser} />}
+        />
       </div>
     );
   }
