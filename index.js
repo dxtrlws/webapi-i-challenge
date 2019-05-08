@@ -21,8 +21,10 @@ server.get('/api/users/:id', (req, res) => {
     .then(user => {
       res.status(201).json(user);
     })
-    .catch(({ code, message }) => {
-      res.status(code).json({ err: message });
+    .catch(({ code }) => {
+      res
+        .status(code)
+        .json({ error: 'The users information could not be retrieved.' });
     });
 });
 
@@ -38,11 +40,9 @@ server.post('/api/users', (req, res) => {
         res.status(201).send(addUser);
       })
       .catch(({ code }) => {
-        res
-          .status(code)
-          .json({
-            error: 'There was an error while saving the user to the database'
-          });
+        res.status(code).json({
+          error: 'There was an error while saving the user to the database'
+        });
       });
   }
 });
