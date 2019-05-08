@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import axios from 'axios';
+ import Users from './Components/Users';
 
 class App extends Component {
   constructor(props) {
@@ -24,9 +25,11 @@ class App extends Component {
   }
 
   render() {
+    const { users } = this.state;
     return (
-      <div>
+      <div className="App">
         <h1>hello</h1>
+        <Users users={users} />
       </div>
     );
   }
