@@ -23,7 +23,7 @@ function findById(id) {
 function insert(user) {
   return db('users')
     .insert(user)
-    .then(ids => ({ id: ids[0] }));
+    .then(ids => ({ id: ids[0], name: user.name, bio: user.bio }));
 }
 
 function update(id, user) {
